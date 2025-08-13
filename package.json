@@ -1,0 +1,40 @@
+{
+  "name": "@yeoularu/rag-cli",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "bin": {
+    "rag": "bin/rag-cli.js",
+    "rag-cli": "bin/rag-cli.js"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "build": "bun build src/index.ts --target=node --format=esm --outfile dist/index.js",
+    "prepublishOnly": "bun run build",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@ai-sdk/google": "^2.0.4",
+    "@clack/prompts": "^0.11.0",
+    "@libsql/client": "^0.15.10",
+    "ai": "^5.0.10"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "prettier": "^3.6.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.2"
+  }
+}
