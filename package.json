@@ -19,8 +19,8 @@
     "access": "public"
   },
   "scripts": {
-    "dev": "bun --watch src/index.ts",
-    "build": "bun build src/index.ts --target=node --format=esm --outfile dist/index.js",
+    "dev": "bun --watch src/cli/index.ts",
+    "build": "bun build src/cli/index.ts --target=node --format=esm --outfile dist/cli/index.js",
     "prepublishOnly": "bun run build",
     "format": "prettier --write ."
   },
@@ -28,7 +28,9 @@
     "@ai-sdk/google": "^2.0.4",
     "@clack/prompts": "^0.11.0",
     "@libsql/client": "^0.15.10",
-    "ai": "^5.0.10"
+    "@types/yargs": "^17.0.33",
+    "ai": "^5.0.10",
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
     "@types/bun": "latest",

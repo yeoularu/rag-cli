@@ -28,7 +28,7 @@ export const embedDocuments = tool({
           title: `📝 Embedding ${items.length} documents...`,
           task: async () => {
             const vectors = await getDocumentEmbeddings(texts)
-            
+
             // Invariant: embedding count must match input count
             if (vectors.length !== items.length) {
               throw new Error(
@@ -49,11 +49,11 @@ export const embedDocuments = tool({
         },
       ])
 
-      const storedTitles = results.map(r => r.title).join(', ')
-      return { 
-        count: results.length, 
+      const storedTitles = results.map((r) => r.title).join(', ')
+      return {
+        count: results.length,
         results,
-        summary: `Stored ${results.length} document(s): ${storedTitles}`
+        summary: `Stored ${results.length} document(s): ${storedTitles}`,
       }
     } catch (error) {
       throw error
