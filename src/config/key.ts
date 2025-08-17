@@ -2,7 +2,7 @@ import { confirm, isCancel, select, text, outro, spinner } from '@clack/prompts'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { homedir } from 'node:os'
-import { getEmbedding } from './services/embeddings'
+import { getEmbedding } from '../services/embeddings'
 
 // Types
 type KeySource = 'google' | 'gemini' | 'manual'
@@ -38,29 +38,6 @@ function clearConfig(): void {
   }
 }
 
-// Arg helpers
-function getCliArgValue(flag: string): string | undefined {
-  const argv = process.argv.slice(2)
-  const eq = argv.find((a) => a.startsWith(`${flag}=`))
-  if (eq) {
-    const value = eq.split('=')[1]
-    return value && value.length > 0 ? value : undefined
-  }
-  const idx = argv.indexOf(flag)
-  if (idx !== -1) {
-    const next = argv[idx + 1]
-    if (typeof next === 'string' && !next.startsWith('-')) {
-      return next
-    }
-  }
-  return undefined
-}
-
-function hasCliFlag(flag: string): boolean {
-  const argv = process.argv.slice(2)
-  return argv.includes(flag)
-}
-
 function maskKey(k?: string): string {
   if (!k) return '(unset)'
   return k.length <= 8
@@ -68,14 +45,12 @@ function maskKey(k?: string): string {
     : `${k.slice(0, 4)}...${k.slice(-4)}`
 }
 
-export async function ensureApiKey() {
+export async function ensureApiKey(reset: boolean = false) {
   const keyFromGoogle = process.env.GOOGLE_GENERATIVE_AI_API_KEY
   const keyFromGemini = process.env.GEMINI_API_KEY
 
   const cfg = readConfig()
-  const resetPref =
-    hasCliFlag('--reset-config') || hasCliFlag('--forget-key-choice')
-  if (resetPref && cfg.preferredKeySource) {
+  if (reset && cfg.preferredKeySource) {
     clearConfig()
   }
 
@@ -84,15 +59,13 @@ export async function ensureApiKey() {
       ? (v.toLowerCase() as KeySource)
       : undefined
 
-  const cliKeySource = normalize(getCliArgValue('--key-source'))
   const envKeySource = normalize(process.env.RAG_KEY_SOURCE)
-  const overrideSource = cliKeySource || envKeySource
   const initialSource: KeySource =
-    overrideSource ||
+    envKeySource ||
     (cfg.preferredKeySource as KeySource | undefined) ||
     (keyFromGoogle ? 'google' : keyFromGemini ? 'gemini' : 'manual')
 
-  const shouldSkipPrompt = Boolean(cfg.preferredKeySource && !overrideSource)
+  const shouldSkipPrompt = Boolean(cfg.preferredKeySource && !envKeySource)
 
   let choice: KeySource
   if (shouldSkipPrompt) {
@@ -102,7 +75,9 @@ export async function ensureApiKey() {
     if (keyFromGoogle) {
       envOptions.push({
         value: 'google',
-        label: `Google Generative AI env (GOOGLE_GENERATIVE_AI_API_KEY): ${maskKey(keyFromGoogle)}`,
+        label: `Google Generative AI env (GOOGLE_GENERATIVE_AI_API_KEY): ${maskKey(
+          keyFromGoogle,
+        )}`,
       })
     }
     if (keyFromGemini) {
