@@ -25,11 +25,11 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@ai-sdk/google": "^2.0.4",
+    "@ai-sdk/google": "^2.0.6",
     "@clack/prompts": "^0.11.0",
-    "@libsql/client": "^0.15.10",
+    "@libsql/client": "^0.15.11",
     "@types/yargs": "^17.0.33",
-    "ai": "^5.0.10",
+    "ai": "^5.0.15",
     "yargs": "^18.0.0"
   },
   "devDependencies": {
